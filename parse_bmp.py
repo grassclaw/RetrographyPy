@@ -47,25 +47,27 @@ def parse_header(f_path):
                 print("Alert! File Size Mismatch: Header")
                 return False
             print(f"File Size: {bmp_header[1]} bytes")
-            print(f"Reserved1: {bmp_header[2]} bytes")
-            print(f"Reserved2: {bmp_header[3]} bytes")
+            if bmp_header[2] != 0 or bmp_header[3] != 0:
+                print(f"Alert! Reserve Field(s) ({bmp_header[2]}, {bmp_header[3]}) not set to 0: Check File Integrety: Header")
+            print(f"Reserved1: {bmp_header[2]}")
+            print(f"Reserved2: {bmp_header[3]}")
             # Ensures minimum offset for BMP file format
             if bmp_header[4]<54:
                 print("Alert! Pixel Offset: Possible corrupted file: Header")
                 return False
             print(f"Data/Pixel Offset: {bmp_header[4]} bytes")
             print(f"Header Size: {bmp_header[5]} bytes")
-            print(f"Image Width: {bmp_header[6]} bytes")
-            print(f"Image Height: {bmp_header[7]} bytes")
+            print(f"Image Width: {bmp_header[6]} pixels")
+            print(f"Image Height: {bmp_header[7]} pixels")
             # Color Pane NOT 1 is possibly corrupted and not BMP format
             if bmp_header[8]!= 1:
                 print("Alert! Color Planes: Possible Malformed File: Header")
                 return False
-            print(f"Planes: {bmp_header[8]} bytes")
+            print(f"Color Planes: {bmp_header[8]}")
             if bmp_header[9] not in [1, 4, 8, 16, 24, 32]:
                 print("Alert! Bits per Pixel: Possible File Corruption: Header")
                 return False
-            print(f"Bits per Pixel: {bmp_header[9]} bytes")
+            print(f"Bits per Pixel: {bmp_header[9]} bbp")
     # Apparently 'try' statements require at least on except
     #could be some others to add but not familiar with pythons error handling
     # Handle File Errors
