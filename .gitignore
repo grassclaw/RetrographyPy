@@ -162,5 +162,5 @@ cython_debug/
 #.idea/
 
 #OS
- resources/.DS_Store
- .DS_Store
+resources/.DS_Store
+.DS_Store
