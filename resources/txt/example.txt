@@ -1,0 +1,3 @@
+1	"There are only two types of companies: those that have been hacked, and those that will be." — Robert MuellerThis statement underscores the inevitability of cyber threats and the need for robust security practices across all organizations.
+2	"It's not if your organization will be breached, but when." — UnknownThis quote serves as a reminder that preparing for a breach is essential, as it's a common occurrence in today’s digital landscape.
+3	"The best way to predict the future is to invent it." — Alan KayWhile not exclusively about cybersecurity, this quote encourages proactive innovation, which is vital in developing new security technologies to combat evolving threats.
