@@ -8,11 +8,15 @@ import argparse
 # ERROR Handling:
 # I use a custom convert to float to capture invalid arguments in this case.
 # This also prevent command line injection as seen in the following example (use of *):
-        # python3 calculator.py add 1.1 2.4 t asdf  *
-        # Operation: add
-        # Valid Numbers: [1.1, 2.4]
-        # Skipped arguments (invalid): ['t', 'asdf', 'calculator copy.py', 'calculator.py', 'class_ex', 'mexsync', 'parse_bmp.py', 'polymorph_example.py']
-        # Result: 3.5
+# % python3 resources/example/calculator.py mod 2 *            
+#       Invalid or missing operation. Please enter one of: add, sub, mul, div, pow
+#       Enter operation (add, sub, mul, div, pow): pow
+#       Error: You must provide at least two valid numbers.      
+#       Enter numbers separated by spaces: 2 2 *
+#       Operation: pow
+#       Valid Numbers: [2.0, 2.0]
+#       Skipped arguments (invalid): ['LICENSE', 'README.md', 'resources', '*']
+#       Result: 4.0
 
 # GLOBAL VARIABLS
 # I usually frown on global variables but this is more for info purposes
