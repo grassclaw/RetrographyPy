@@ -16,9 +16,9 @@ import argparse
 
 # GLOBAL VARIABLS
 # I usually frown on global variables but this is more for info purposes
-skipped_args = []  # This captures invalid arguments
+skipped_args = []
 
-# Base class for all operations
+# Base Class: Operations
 class Operation:
     def __init__(self, numbers):
         self.numbers = numbers
@@ -26,12 +26,15 @@ class Operation:
     def execute(self):
         raise NotImplementedError("This method should be overridden by subclasses")
 
-# Subclass for addition
+# The following methods for the operations were found on the internet. 
+# I created my own but looked more forgiving/effecient methods
+
+# Subclass: addition (add)
 class Addition(Operation):
     def execute(self):
         return sum(self.numbers)
 
-# Subclass for subtraction
+# Subclass: subtraction (sub)
 class Subtraction(Operation):
     def execute(self):
         result = self.numbers[0]
@@ -39,7 +42,7 @@ class Subtraction(Operation):
             result -= num
         return result
 
-# Subclass for multiplication
+# Subclass: multiplication (mul)
 class Multiplication(Operation):
     def execute(self):
         result = 1
@@ -47,7 +50,7 @@ class Multiplication(Operation):
             result *= num
         return result
 
-# Subclass for division
+# Subclass: division (div)
 class Division(Operation):
     def execute(self):
         result = self.numbers[0]
@@ -57,7 +60,7 @@ class Division(Operation):
             result /= num
         return result
 
-# Subclass for exponentiation
+# Subclass: Exponentiation (pow)
 class Exponentiation(Operation):
     def execute(self):
         result = self.numbers[0]
@@ -65,10 +68,9 @@ class Exponentiation(Operation):
             result **= num
         return result
 
-# Calculator class that manages operation delegation
+# Calculator Manager Class
 class Calculator:
     def __init__(self):
-        # Map operation names to corresponding classes
         self.operations = {
             "add": Addition,
             "sub": Subtraction,
@@ -81,52 +83,85 @@ class Calculator:
         if operation_name not in self.operations:
             raise InvalidOperationError(f"Unsupported operation. Please choose from: {', '.join(self.operations.keys())}")
         
-        # Instantiate the appropriate operation class and execute
         operation_class = self.operations[operation_name](numbers)
         return operation_class.execute()
+
+    # Custom Type Conversion Function: Validate and convert the number arguments
+    @staticmethod
+    def convert_to_float(value):
+        try:
+            return float(value)
+        except ValueError:
+            skipped_args.append(value)
+            return None  # Skip non-numeric arguments
 
 # Custom exception for invalid operations
 class InvalidOperationError(Exception):
     def __init__(self, message):
         super().__init__(message)
 
-def convert_to_float(value):
+# Function to parse arguments initially from command-line or re-prompt
+def parse_arguments():
+    parser = argparse.ArgumentParser(description="A Command-line calculator.")
+    parser.add_argument("operation", help="The operation to perform (add, sub, mul, div, pow)")
+    parser.add_argument("numbers", nargs='*', help="Numbers for operation")
+    
     try:
-        return float(value)
-    except ValueError:
-        skipped_args.append(value)  # This modifies the global variable
-        return None
+        args = parser.parse_args()
+        return args.operation, args.numbers
+    except SystemExit:
+        return None, None
+
+# Function to validate and re-prompt if necessary
+def get_valid_input(calculator):
+    while True:
+        # Initial argument parsing from command-line
+        operation, numbers_input = parse_arguments()
+
+# THIS seems like an incredibly wasteful way to check but I wanted a robust method to reprompt users for a variety of usr mistakes
+# There's definitely space to create yet another subclass or def to reinstitue numbers list
+        # CHECK: Invalid Op
+        while operation not in calculator.operations:
+            print("Invalid or missing operation. Please enter one of: add, sub, mul, div, pow")
+            operation = input("Enter operation (add, sub, mul, div, pow): ").strip()
+        
+        # CHECK: more than 1 #...handles/skips invalid inputs
+        numbers = []
+        while len(numbers) < 2:
+            # Convert to float and skip non-numerics which are stored in skip array
+            numbers = [calculator.convert_to_float(num) for num in numbers_input or []]
+            numbers = [num for num in numbers if num is not None]
+            if len(numbers) < 2:
+                print("Error: You must provide at least two valid numbers.")
+                numbers_input = input("Enter numbers separated by spaces: ").strip().split()
+        
+        # CHECK: Divide by 0
+        while operation == "div" and 0 in numbers[1:]:
+            numbers = [calculator.convert_to_float(num) for num in numbers_input or []]
+            numbers = [num for num in numbers if num is not None]
+            if operation == "div" and 0 in numbers[1:]:
+                print("Error: Division by zero detected. Please enter numbers that do not include zero in the divisor.")
+                numbers_input = input("Enter numbers separated by spaces (excluding zero for divisor): ").strip().split()
+                        
+        return operation, numbers
 
 def main():
-    # Set up argument parsing
-    parser = argparse.ArgumentParser(description="A simple command-line calculator with class-based operations.")
-    parser.add_argument("operation", help="The operation to perform (add, sub, mul, div, pow)")
-    parser.add_argument("numbers", nargs='+', type=convert_to_float, help="Numbers on which to perform the operation")
-
-    args = parser.parse_args()
-
-    # Ensure there are at least two numbers
-    if len(args.numbers) < 2:
-        print("Error: You must provide at least two numbers.")
-        return
-    args.numbers = [num for num in args.numbers if num is not None]
-
-    print("Operation:", args.operation)
-    print("Valid Numbers:", args.numbers)
-    print("Skipped arguments (invalid):", skipped_args)
-
-    # Create a Calculator instance
     calculator = Calculator()
 
+    # Get valid input and perform calculation
+    operation, numbers = get_valid_input(calculator)
+
+    print("Operation:", operation)
+    print("Valid Numbers:", numbers)
+    print("Skipped arguments (invalid):", skipped_args)
+
     try:
-        result = calculator.perform_operation(args.operation, args.numbers)
+        result = calculator.perform_operation(operation, numbers)
         print(f"Result: {result}")
     except InvalidOperationError as e:
-        print(f"Error: {e}")
+        print(f"Error: {e}. Please enter a valid operation.")
     except ZeroDivisionError as e:
-        print(f"Error: {e}")
-    except ValueError:
-        print("Error: Both arguments must be numbers.")
+        print(f"Error: {e}. Please enter a new set of numbers that do not include zero in the divisor.")
     except Exception as e:
         print(f"An unexpected error occurred: {e}")
 
