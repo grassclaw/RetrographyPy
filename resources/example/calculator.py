@@ -71,6 +71,7 @@ class Exponentiation(Operation):
 # Calculator Manager Class
 class Calculator:
     def __init__(self):
+        # Op names to corresponding classes
         self.operations = {
             "add": Addition,
             "sub": Subtraction,
@@ -80,19 +81,17 @@ class Calculator:
         }
 
     def perform_operation(self, operation_name, numbers):
-        if operation_name not in self.operations:
-            raise InvalidOperationError(f"Unsupported operation. Please choose from: {', '.join(self.operations.keys())}")
-        
+        # We check appropriate op in input def. We execute here.
         operation_class = self.operations[operation_name](numbers)
         return operation_class.execute()
 
     # Custom Type Conversion Function: Validate and convert the number arguments
-    @staticmethod
+    @staticmethod #took me a while to figure out why I needed to put this line
     def convert_to_float(value):
         try:
             return float(value)
         except ValueError:
-            skipped_args.append(value)
+            skipped_args.append(value) # This modifies the global variable
             return None  # Skip non-numeric arguments
 
 # Custom exception for invalid operations
@@ -100,7 +99,17 @@ class InvalidOperationError(Exception):
     def __init__(self, message):
         super().__init__(message)
 
+# Custom: argparse error handler 
+# I moved away from this. I decided it was cleaner through the custom float instead.
+# The logic here was to overwrite Argparse default error handling which results
+# in exit which in my opinion isn't the best handling for a robust app
+# class CustomArgumentParser(argparse.ArgumentParser):
+    # def error(self, message):
+        # Override the default error behavior to prevent SystemExit
+        # sys.stderr.write(f"Error: {message}\n")
+        # sys.exit(2)  # Optionally, you can use any custom exit code here or return gracefully
 # Function to parse arguments initially from command-line or re-prompt
+
 def parse_arguments():
     parser = argparse.ArgumentParser(description="A Command-line calculator.")
     parser.add_argument("operation", help="The operation to perform (add, sub, mul, div, pow)")
@@ -118,8 +127,9 @@ def get_valid_input(calculator):
         # Initial argument parsing from command-line
         operation, numbers_input = parse_arguments()
 
-# THIS seems like an incredibly wasteful way to check but I wanted a robust method to reprompt users for a variety of usr mistakes
-# There's definitely space to create yet another subclass or def to reinstitue numbers list
+    # THIS seems like an incredibly wasteful way to check but I wanted a robust method to reprompt users for a variety of usr mistakes
+    # There's definitely space to create yet another subclass or def to reinstitue numbers list
+    # Just short of spending too much time cleaning this code, it was the best I came up with after a few versions
         # CHECK: Invalid Op
         while operation not in calculator.operations:
             print("Invalid or missing operation. Please enter one of: add, sub, mul, div, pow")
@@ -150,7 +160,7 @@ def main():
 
     # Get valid input and perform calculation
     operation, numbers = get_valid_input(calculator)
-
+    # Print Input Stats of Interest
     print("Operation:", operation)
     print("Valid Numbers:", numbers)
     print("Skipped arguments (invalid):", skipped_args)
