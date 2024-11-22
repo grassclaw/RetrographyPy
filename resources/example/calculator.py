@@ -31,7 +31,7 @@ class Operation:
         raise NotImplementedError("This method should be overridden by subclasses")
 
 # The following methods for the operations were found on the internet. 
-# I created my own but looked more forgiving/effecient methods
+# I created my own but looked for more forgiving/effecient methods
 
 # Subclass: addition (add)
 class Addition(Operation):

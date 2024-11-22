@@ -164,3 +164,4 @@ cython_debug/
 #OS
 resources/.DS_Store
 .DS_Store
+shared_memory.bin
