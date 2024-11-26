@@ -32,7 +32,7 @@ Use the following command to check if SSH is listening on port 22:
 
 ---
 
-# Test Local SSH Connectivity
+# Test Local SSH Connectivity (optional)
 
 From within your Windows VM, test SSH locally to verify the server is responding:
 
