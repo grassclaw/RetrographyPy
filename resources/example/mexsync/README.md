@@ -2,6 +2,27 @@
 
 This README provides instructions for setting up the environment, installing necessary packages, and running the Trojan and Spy scripts to implement the Mex+Sync covert channel.
 
+## Next Steps
+Enhance Covert Channel:
+- Improve timing! :/ :
+    - It's currently very very very very VERY slow!
+    - Ideas:
+        1. Variable-Length Encoding (Run-Length Encoding) 50ms -> 3 consectuvie 1's, etc.
+        2. Matrix Based Encoding for N-Dimensional matrix
+        3. Compression! Compress (e.g., ZIP, GZIP)
+- Improve Adaptive communication:
+    - Ideas:
+        1. Hierarchical Encoding with Control Signals
+- Error Checking
+    - Ideas:
+        1. Checksum exchange
+        2. Parity Check
+- Add randomized timing or switch to other synchronization primitives (e.g., semaphores, events).
+
+- Experiment with Cross-VM Communication:
+
+    -  Test the channel across different VMs using shared mutexes in the Global\\ namespace.
+
 ## 1. Prerequisites
 
 Ensure you have the following installed on your Windows VM:
@@ -92,13 +113,6 @@ Follow these steps to test the covert channel:
 - Verify the MUTEX_NAME constant matches in both trojan.py and spy.py.
 - Adjust the THRESHOLD value in spy.py if the bits are misinterpreted.
 
-## 7. Next Steps
-Enhance Covert Channel:
-- Add randomized timing or switch to other synchronization primitives (e.g., semaphores, events).
-
-- Experiment with Cross-VM Communication:
-
-- Test the channel across different VMs using shared mutexes in the Global\\ namespace.
 
 ## Additional Notes
 This project uses Win32 API through pywin32, which provides direct access to Windows-native synchronization primitives.

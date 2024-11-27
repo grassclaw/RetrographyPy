@@ -1,6 +1,7 @@
 import time
 import win32event
 import win32api
+import zlib  # For potential compression
 
 # Constants
 MUTEX_NAME = "Global\\MexSyncMutex"
@@ -16,6 +17,14 @@ EOM_SIGNAL = 3.0  # End-of-message signal (3 seconds)
 mutex = win32event.CreateMutex(None, False, MUTEX_NAME)
 
 def message_to_binary(message):
+    # Optionally compress the message
+    # Uncomment this block to enable compression
+    # try:
+    #     message = zlib.compress(message.encode()).decode()
+    #     print("Trojan: Message compressed successfully")
+    # except Exception as e:
+    #     print(f"Trojan: Failed to compress message: {e}")
+
     # Convert each character to binary and group bits into pairs
     binary_stream = ''.join(format(ord(char), '08b') for char in message)
     grouped_bits = [binary_stream[i:i+2] for i in range(0, len(binary_stream), 2)]
@@ -38,6 +47,7 @@ def send_eom():
 if __name__ == "__main__":
     try:
         message = input("Enter the message to send: ")
+
         binary_pairs = message_to_binary(message)
         
         start_time = time.time()
